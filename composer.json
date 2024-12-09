@@ -1,0 +1,18 @@
+{
+    "name": "kbabolhavaeji/php-jobs-and-queue-and-worker",
+    "description": "complete package for jobs and queues and worker for pure php projects",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kiumars",
+            "email": "k.babolhavaeji@gmail.comm"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "JobsQueueWorker\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
