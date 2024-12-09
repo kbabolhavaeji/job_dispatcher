@@ -1,4 +1,4 @@
-# PHP Job Queue
+# PHP Job Queue Worker
 
 A simple job queue system for PHP.
 
