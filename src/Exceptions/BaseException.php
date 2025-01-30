@@ -9,11 +9,8 @@ use RuntimeException;
  */
 abstract class BaseException extends RuntimeException {
 
-    protected $message;
-    protected $code;
-
-    public function __construct()
+    public function __construct($message = "", $code = 0)
     {
-        parent::__construct($this->message, $this->code);
+        parent::__construct($message, $code);
     }
 }

@@ -4,6 +4,7 @@ namespace JobsQueueWorker\Drivers;
 
 use JobsQueueWorker\Contracts\DatabaseDriverInterface;
 use JobsQueueWorker\Dtos\DBDriverDto;
+use JobsQueueWorker\Exceptions\DBDriverException;
 use JobsQueueWorker\Job;
 use PDO;
 
@@ -95,7 +96,7 @@ class PDODriver implements DatabaseDriverInterface {
     private function plug(): void
     {
 
-        if(is_null($this->operator) == false){
+        if(!is_null($this->operator)){
             return;
         }
 
@@ -112,7 +113,21 @@ class PDODriver implements DatabaseDriverInterface {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
-        $this->operator = new PDO($dsn, $username, $password, $options);
+
+        try {
+            $this->operator = new PDO($dsn, $username, $password, $options);
+        }catch (\PDOException $e){
+
+            if($e->getCode() == 1049){
+                throw new DBDriverException('Unknown database: ' . $database);
+            }
+
+            if($e->getCode() == '42S02'){
+                throw new DBDriverException('Table job does not exist: ' . $database);
+            }
+
+            throw new DBDriverException($e->getMessage());
+        }
     }
 
 }

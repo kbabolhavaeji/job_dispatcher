@@ -2,11 +2,12 @@
 
 namespace JobsQueueWorker\Dtos;
 
-/**
- * @todo this class should folow singelton pattern
- */
-class DBDriverDto {
+use JobsQueueWorker\Exceptions\ValidationException;
 
+class DBDriverDto
+{
+
+    private static ?self $instance = null;
     private string $host;
     private string $port;
     private string $username;
@@ -16,122 +17,162 @@ class DBDriverDto {
 
     /**
      * Get the value of host
-     */ 
+     */
     public function getHost()
     {
+        if (empty($this->host)) {
+            throw new ValidationException('Host address has not set');
+        }
+
         return $this->host;
     }
 
     /**
      * Set the value of host
      *
-     * @return  self
-     */ 
-    public function setHost($host)
+     * @param $host
+     * @return void
+     */
+    public function setHost($host): void
     {
+        if (empty($host)) {
+            throw new ValidationException('Host address can not be empty');
+        }
         $this->host = $host;
-
-        return $this;
     }
 
     /**
      * Get the value of port
-     */ 
+     */
     public function getPort()
     {
+        if (empty($this->port)) {
+            throw new ValidationException('Port has not set');
+        }
+
         return $this->port;
     }
 
     /**
      * Set the value of port
      *
-     * @return  self
-     */ 
-    public function setPort($port)
+     * @param $port
+     * @return void
+     */
+    public function setPort($port): void
     {
-        $this->port = $port;
+        if (empty($port)) {
+            throw new ValidationException('Port can not be empty');
+        }
 
-        return $this;
+        $this->port = $port;
     }
 
     /**
      * Get the value of username
-     */ 
+     */
     public function getUsername()
     {
+        if (empty($this->username)) {
+            throw new ValidationException('Username has not set');
+        }
+
         return $this->username;
     }
 
     /**
      * Set the value of username
      *
-     * @return  self
-     */ 
-    public function setUsername($username)
+     * @param $username
+     * @return void
+     */
+    public function setUsername($username): void
     {
-        $this->username = $username;
+        if (empty($username)) {
+            throw new ValidationException('Username can not be empty');
+        }
 
-        return $this;
+        $this->username = $username;
     }
 
     /**
      * Get the value of password
-     */ 
+     */
     public function getPassword()
     {
+        if (empty($this->password)) {
+            throw new ValidationException('Password has not set');
+        }
+
         return $this->password;
     }
 
     /**
      * Set the value of password
      *
-     * @return  self
-     */ 
-    public function setPassword($password)
+     * @param $password
+     * @return void
+     */
+    public function setPassword($password): void
     {
-        $this->password = $password;
+        if (empty($password)) {
+            throw new ValidationException('Password can not be empty');
+        }
 
-        return $this;
+        $this->password = $password;
     }
 
     /**
      * Get the value of table
-     */ 
+     */
     public function getDatabase()
     {
+        if (empty($this->database)) {
+            throw new ValidationException('Database name has not set');
+        }
+
         return $this->database;
     }
 
     /**
      * Set the value of table
      *
-     * @return  self
-     */ 
-    public function setDatabase($database)
+     * @param $database
+     * @return void
+     */
+    public function setDatabase($database): void
     {
-        $this->database = $database;
+        if (empty($database)) {
+            throw new ValidationException('Database name can not be empty');
+        }
 
-        return $this;
+        $this->database = $database;
     }
 
     /**
      * Get the value of charset
-     */ 
+     */
     public function getCharset()
     {
+        if (empty($this->charset)) {
+            throw new ValidationException('Charset has not set');
+        }
+
         return $this->charset;
     }
 
     /**
      * Set the value of charset
      *
-     * @return  self
-     */ 
-    public function setCharset($charset)
+     * @param string $charset
+     * @return void
+     */
+    public function setCharset(string $charset): void
     {
+        if (empty($charset)) {
+            throw new ValidationException('Charset can not be empty');
+        }
+
         $this->charset = $charset;
-
-        return $this;
     }
-
 }
