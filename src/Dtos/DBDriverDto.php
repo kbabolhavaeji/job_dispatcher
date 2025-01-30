@@ -6,8 +6,6 @@ use JobsQueueWorker\Exceptions\ValidationException;
 
 class DBDriverDto
 {
-
-    private static ?self $instance = null;
     private string $host;
     private string $port;
     private string $username;
