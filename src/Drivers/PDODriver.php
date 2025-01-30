@@ -47,26 +47,29 @@ class PDODriver implements DatabaseDriverInterface {
      * @var string PUSH_QUERY
      */
     private const PUSH_QUERY = "INSERT INTO jobs (class, job, queue, state) VALUES (:class, :job, :queue, :state)";
-        
+
     /**
      * push query
      *
-     * @param  mixed $job
-     * @return PDO
+     * @param mixed $job
+     * @return bool
      */
     public function push(Job $job): bool
     {
 
         $class = get_class($job);
+        $jobDetails = $job->serialize();
+        $queue = $job->getQueue();
+        $state = $job->getState();
+
         $query = $this->operator->prepare(self::PUSH_QUERY);
         $query->bindParam(':class', $class, PDO::PARAM_STR);
-        $query->bindParam(':job', $job->serialize(), PDO::PARAM_STR);
-        $query->bindParam(':queue', $job->getQueue(), PDO::PARAM_STR);
-        $query->bindParam(':state', $job->getState(), PDO::PARAM_STR);
-        $result = $query->execute();
-        $result = $this->operator->lastInsertId();
+        $query->bindParam(':job', $jobDetails, PDO::PARAM_STR);
+        $query->bindParam(':queue', $queue, PDO::PARAM_STR);
+        $query->bindParam(':state', $state, PDO::PARAM_STR);
+        $query->execute();
+        return $this->operator->lastInsertId();
 
-        return $result;
     }
 
     /**
@@ -123,7 +126,7 @@ class PDODriver implements DatabaseDriverInterface {
             }
 
             if($e->getCode() == '42S02'){
-                throw new DBDriverException('Table job does not exist: ' . $database);
+                throw new DBDriverException('Table jobs does not exist: ' . $database);
             }
 
             throw new DBDriverException($e->getMessage());
