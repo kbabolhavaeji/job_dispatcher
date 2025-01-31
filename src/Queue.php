@@ -3,45 +3,43 @@
 namespace JobsQueueWorker;
 
 use JobsQueueWorker\Contracts\DatabaseDriverInterface;
-use JobsQueueWorker\Job;
 
 /**
  * Queue Class.
- * 
+ *
  * This class is a blue-print for the queues
- * 
+ *
  */
 class Queue
 {
     protected $dirver;
-    protected ?Job $jobData;
-    
+
     public function __construct(DatabaseDriverInterface $driver)
     {
         $this->dirver = $driver;
     }
-    
+
     /**
-     * push
+     * Push a job into a specific queue.
+     * Serialize and store job
      *
-     * @param  mixed $job
+     * @param mixed $job
      * @return void
      */
     public function push(Job $job)
     {
-        // Serialize and store job
-        $this->jobData = $this->dirver->push($job);
+        $this->dirver->push($job);
     }
-    
+
     /**
-     * pop
+     * Pop a job from queue.
+     * Retrieve and unserialize job
      *
-     * @param  mixed $job
+     * @param mixed $job
      * @return void
      */
     public function pop($job)
     {
-        // Retrieve and unserialize job
         $this->dirver->pop($job);
     }
 }
