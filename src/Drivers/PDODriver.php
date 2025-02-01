@@ -13,33 +13,40 @@ class PDODriver implements DatabaseDriverInterface {
     protected $operator = null;
     private static ?PDODriver $instance = null;
     private DBDriverDto $DBDto;
-    
+
     /**
-     * generate new instance of the class. 
+     * generate new instance of the class.
      *
      * to implement singleton pattern in the class strucrure.
-     * 
-     * @param  mixed $DBDto
-     * @return PDODriver
+     *
+     * @return PDODriver|null
      */
-    public static function getInstance(DBDriverDto $DBDto){
+    public static function getInstance(): ?PDODriver
+    {
 
         if(is_null(self::$instance)){
-            return new static($DBDto);
+            return new self();
         }
 
         return self::$instance;
     }
-    
+
     /**
      * __construct method
      *
-     * @param  mixed $DBDto
-     * @return void
      */
-    private function __construct($DBDto)
+    private function __construct()
     {
-        $this->DBDto = $DBDto;
+
+        $datasourceDto = new DBDriverDto();
+        $datasourceDto->setHost('172.17.0.2');
+        $datasourceDto->setPort('3306');
+        $datasourceDto->setDatabase('jobdispatcher');
+        $datasourceDto->setUsername('root');
+        $datasourceDto->setPassword('password');
+        $datasourceDto->setCharset('utf8');
+
+        $this->DBDto = $datasourceDto;
         $this->plug();
     }
 
