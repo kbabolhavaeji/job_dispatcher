@@ -3,7 +3,6 @@
 namespace JobsQueueWorker;
 
 use JobsQueueWorker\Drivers\PDODriver;
-use JobsQueueWorker\Dtos\DBDriverDto;
 
 /**
  * Job Abstract Class.
@@ -161,20 +160,8 @@ abstract class Job
     public function dispatch(string $queue = 'default'): void
     {
         $this->setQueue($queue);
-
-        // should be inserted in config directory
-        $datasourceDto = new DBDriverDto();
-        $datasourceDto->setHost('172.17.0.2');
-        $datasourceDto->setPort('3306');
-        $datasourceDto->setDatabase('jobdispatcher');
-        $datasourceDto->setUsername('root');
-        $datasourceDto->setPassword('password');
-        $datasourceDto->setCharset('utf8');
-
-        $pdoDriverInstance = PDODriver::getInstance($datasourceDto);
+        $pdoDriverInstance = PDODriver::getInstance();
         $this->queue = new Queue($pdoDriverInstance);
         $this->queue->push($this);
-        // should be inserted in config directory
-
     }
 }
