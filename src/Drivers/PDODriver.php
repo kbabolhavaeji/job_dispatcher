@@ -82,7 +82,7 @@ class PDODriver implements DatabaseDriverInterface {
     /**
      * @var string POP_QUERY
      */
-    private const POP_QUERY = "DELETE FROM jobs WHERE :job_id = ?";
+    private const POP_QUERY = "DELETE FROM jobs WHERE id = :job_id";
     
     /**
      * pop method to delete the record from database.
@@ -140,4 +140,13 @@ class PDODriver implements DatabaseDriverInterface {
         }
     }
 
+    private const FETCH_ALL_QUERY = "SELECT * FROM jobs WHERE queue = :queue AND state = :state";
+    public function builder(string $queue = 'default', string $state = 'pending'): \PDOStatement
+    {
+        $query = $this->operator->prepare(self::FETCH_ALL_QUERY);
+        $query->bindParam(':queue', $queue, PDO::PARAM_STR);
+        $query->bindParam(':state', $state, PDO::PARAM_STR);
+        $query->execute();
+        return $query;
+    }
 }

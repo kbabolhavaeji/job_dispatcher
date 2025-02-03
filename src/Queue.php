@@ -12,7 +12,7 @@ use JobsQueueWorker\Contracts\DatabaseDriverInterface;
  */
 class Queue
 {
-    protected $dirver;
+    protected DatabaseDriverInterface $dirver;
 
     public function __construct(DatabaseDriverInterface $driver)
     {
@@ -26,7 +26,7 @@ class Queue
      * @param mixed $job
      * @return void
      */
-    public function push(Job $job)
+    public function push(Job $job): void
     {
         $this->dirver->push($job);
     }
@@ -38,7 +38,7 @@ class Queue
      * @param mixed $job
      * @return void
      */
-    public function pop($job)
+    public function pop(int $job): void
     {
         $this->dirver->pop($job);
     }

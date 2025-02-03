@@ -21,4 +21,13 @@ Interface DatabaseDriverInterface {
      * @return void
      */
     public function pop($id): void;
+
+    /**
+     * Fetch all the jobs for a queue
+     *
+     * @return \PDOStatement
+     */
+    public function builder(): \PDOStatement;
+
+
 }
