@@ -24,7 +24,7 @@ class PDODriver implements DatabaseDriverInterface {
     public static function getInstance(): ?PDODriver
     {
 
-        if(is_null(self::$instance)){
+        if (is_null(self::$instance)) {
             return new self();
         }
 
@@ -83,11 +83,11 @@ class PDODriver implements DatabaseDriverInterface {
      * @var string POP_QUERY
      */
     private const POP_QUERY = "DELETE FROM jobs WHERE id = :job_id";
-    
+
     /**
      * pop method to delete the record from database.
      *
-     * @param  mixed $id
+     * @param mixed $id
      * @return void
      */
     public function pop($id): void
@@ -97,7 +97,7 @@ class PDODriver implements DatabaseDriverInterface {
         $query->execute();
         $query->fetch();
     }
-       
+
     /**
      * plug the connection to the database.
      *
@@ -106,7 +106,7 @@ class PDODriver implements DatabaseDriverInterface {
     private function plug(): void
     {
 
-        if(!is_null($this->operator)){
+        if (!is_null($this->operator)) {
             return;
         }
 
@@ -119,20 +119,20 @@ class PDODriver implements DatabaseDriverInterface {
 
         $dsn = "mysql:host=$host;port=$port;dbname=$database;charset=$charset";
         $options = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
         ];
 
         try {
             $this->operator = new PDO($dsn, $username, $password, $options);
-        }catch (\PDOException $e){
+        } catch (\PDOException $e) {
 
-            if($e->getCode() == 1049){
+            if ($e->getCode() == 1049) {
                 throw new DBDriverException('Unknown database: ' . $database);
             }
 
-            if($e->getCode() == '42S02'){
+            if ($e->getCode() == '42S02') {
                 throw new DBDriverException('Table jobs does not exist: ' . $database);
             }
 

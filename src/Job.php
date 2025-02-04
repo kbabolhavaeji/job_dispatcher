@@ -19,19 +19,17 @@ abstract class Job
 {
     protected const ATTEMPTS = 0;
     protected const MAXATTEMPTS = 3;
-    protected const JOB_STATES = [
+    public const JOB_STATES = [
         'pending' => self::PENDING_STATE,
         'inprogress' => self::INPROGRESS_STATE,
         'done' => self::DONE_STATE,
-        'failed' => self::FAILED_STATE,
-        'retry' => self::RETRY_STATE
+        'failed' => self::FAILED_STATE
     ];
 
     private const PENDING_STATE = 'pending';
-    private const INPROGRESS_STATE = 'inprogress';
+    private const INPROGRESS_STATE = 'progressing';
     private const DONE_STATE = 'done';
     private const FAILED_STATE = 'failed';
-    private const RETRY_STATE = 'retry';
     private const DEFAULT_QUEUE = 'default';
     private ?Queue $queue = null;
 
@@ -45,7 +43,7 @@ abstract class Job
      *
      * @return void
      */
-    abstract public function handle();
+    abstract public function execute();
 
     /**
      * fail
@@ -93,6 +91,7 @@ abstract class Job
     {
         return serialize([
             'attempts' => $this->attempts,
+            'maxAttempts' => $this->maxAttempts,
             'queue' => $this->defaultQueue,
             'state' => $this->state
         ]);
@@ -108,6 +107,7 @@ abstract class Job
     {
         $data = unserialize($data);
         $this->attempts = $data['attempts'];
+        $this->maxAttempts = $data['maxAttempts'];
         $this->defaultQueue = $data['queue'];
         $this->state = $data['state'];
     }
