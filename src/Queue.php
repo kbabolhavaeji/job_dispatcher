@@ -42,4 +42,9 @@ class Queue
     {
         $this->dirver->pop($job);
     }
+
+    public function patch(string $field, string $value, int $id): void
+    {
+        //
+    }
 }
