@@ -27,7 +27,7 @@ abstract class Job
     ];
 
     private const PENDING_STATE = 'pending';
-    private const INPROGRESS_STATE = 'progressing';
+    private const INPROGRESS_STATE = 'processing';
     private const DONE_STATE = 'done';
     private const FAILED_STATE = 'failed';
     private const DEFAULT_QUEUE = 'default';

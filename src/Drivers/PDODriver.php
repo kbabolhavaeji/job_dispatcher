@@ -99,6 +99,21 @@ class PDODriver implements DatabaseDriverInterface {
     }
 
     /**
+     * @param string $field
+     * @param mixed $value
+     * @param int $id
+     * @return void
+     */
+    public function patch(string $field, mixed $value, int $id): void
+    {
+        $query = $this->operator->prepare("UPDATE jobs SET $field = :value WHERE id = :job_id ");
+        $query->bindParam(':value', $value, PDO::PARAM_STR);
+        $query->bindParam(':job_id', $id, PDO::PARAM_INT);
+
+        $query->execute();
+    }
+
+    /**
      * plug the connection to the database.
      *
      * @return void

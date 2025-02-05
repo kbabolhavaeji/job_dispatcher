@@ -41,24 +41,26 @@ class Worker
 
             try {
 
+                if ($jobProperties['attempts'] >= $jobProperties['maxAttempts']) {
+                    $this->queue->patch('state', Job::JOB_STATES['failed'], $obj->id);
+                    return;
+                }
+
                 $method = $this->getReflectionMethod($obj->class, self::DEFAULT_JOB_EXECUTION_METHOD_NAME);
                 $method->invoke(new $obj->class());
                 $this->queue->patch('state', Job::JOB_STATES['done'], $obj->id);
+                $this->queue->pop($obj->id);
 
             } catch (Exception $e) {
 
                 //todo: use $e for the log description
 
-                if ($jobProperties['attempts'] >= $jobProperties['maxAttempts']) {
-                    $tries = intval($jobProperties['attempts']) + 1;
-                    $job = $jobProperties['attempts'] = $tries;
-                    $this->queue->patch('job', serialize($job), $obj->id);
-                    $this->queue->patch('state', Job::JOB_STATES['pending'], $obj->id);
-                } else {
-                    $method = $this->getReflectionMethod($obj->class, self::DEFAULT_JOB_FAIL_METHOD_NAME);
-                    $method->invoke(new $obj->class());
-                    $this->queue->patch('state', Job::JOB_STATES['failed'], $obj->id);
-                }
+                $method = $this->getReflectionMethod($obj->class, self::DEFAULT_JOB_FAIL_METHOD_NAME);
+                $method->invoke(new $obj->class());
+                $this->queue->patch('state', Job::JOB_STATES['failed'], $obj->id);
+                $tries = intval($jobProperties['attempts']) + 1;
+                $jobProperties['attempts'] = $tries;
+                $this->queue->patch('job', serialize($jobProperties), $obj->id);
             }
         }
     }
