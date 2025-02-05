@@ -7,7 +7,7 @@ use JobsQueueWorker\Contracts\DatabaseDriverInterface;
 /**
  * Queue Class.
  *
- * This class is a blue-print for the queues
+ * This class is a blue-print for the queues.
  *
  */
 class Queue
@@ -21,7 +21,7 @@ class Queue
 
     /**
      * Push a job into a specific queue.
-     * Serialize and store job
+     * Serialize and store job.
      *
      * @param mixed $job
      * @return void
@@ -33,7 +33,7 @@ class Queue
 
     /**
      * Pop a job from queue.
-     * Retrieve and unserialize job
+     * Retrieve and unserialize job.
      *
      * @param mixed $job
      * @return void
@@ -43,8 +43,16 @@ class Queue
         $this->dirver->pop($job);
     }
 
+    /**
+     * Parch a specific field in a job row.
+     *
+     * @param string $field
+     * @param string $value
+     * @param int $id
+     * @return void
+     */
     public function patch(string $field, string $value, int $id): void
     {
-        //
+        $this->dirver->patch($field, $value, $id);
     }
 }
