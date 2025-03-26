@@ -2,12 +2,10 @@
 
 namespace JobsQueueWorker;
 
-use JobsQueueWorker\Drivers\PDODriver;
-
 /**
  * Job Abstract Class.
  *
- * This class is a blue-print for the job classes which extend this class.
+ * This class is a blue-print for the job classes which extends this class.
  *
  * @package JobsQueueWorker
  * @access public
@@ -17,43 +15,40 @@ use JobsQueueWorker\Drivers\PDODriver;
  */
 abstract class Job
 {
-    protected const ATTEMPTS = 0;
-    protected const MAXATTEMPTS = 3;
+    public const ATTEMPTS = 0;
+    public const MAX_ATTEMPTS = 3;
     public const JOB_STATES = [
-        'pending' => self::PENDING_STATE,
-        'inprogress' => self::INPROGRESS_STATE,
-        'done' => self::DONE_STATE,
-        'failed' => self::FAILED_STATE
+        self::PENDING_STATE,
+        self::PROCESSING_STATE,
+        self::DONE_STATE,
+        self::FAILED_STATE
     ];
 
-    private const PENDING_STATE = 'pending';
-    private const INPROGRESS_STATE = 'processing';
-    private const DONE_STATE = 'done';
-    private const FAILED_STATE = 'failed';
-    private const DEFAULT_QUEUE = 'default';
-    private ?Queue $queue = null;
+    public const PENDING_STATE = 'pending';
+    public const PROCESSING_STATE = 'processing';
+    public const DONE_STATE = 'done';
+    public const FAILED_STATE = 'failed';
 
-    protected int $attempts = self::ATTEMPTS;
-    protected int $maxAttempts = self::MAXATTEMPTS;
-    protected string $defaultQueue = self::DEFAULT_QUEUE;
-    protected string $state = self::JOB_STATES['pending'];
+    private string $state = self::PENDING_STATE;
+    private int $attempts = self::ATTEMPTS;
+    private int $maxAttempts = self::MAX_ATTEMPTS;
 
     /**
-     * handle
+     * handle method.
      *
      * @return void
      */
-    abstract public function execute();
+    abstract public function handle(): void;
 
     /**
-     * fail
+     * fail method.
      *
      * @return void
      */
-    abstract public function fail();
+    abstract public function fail(): void;
 
     /**
-     * incrementAttempts
+     * Increment number of attempts.
      *
      * @return void
      */
@@ -63,7 +58,7 @@ abstract class Job
     }
 
     /**
-     * hasExceededMaxAttempts
+     * hasExceededMaxAttempts condition.
      *
      * @return bool
      */
@@ -73,7 +68,7 @@ abstract class Job
     }
 
     /**
-     * shouldRetry
+     * ShouldRetry condition.
      *
      * @return bool
      */
@@ -83,85 +78,63 @@ abstract class Job
     }
 
     /**
-     * serialize
-     *
-     * @return string
+     * Get the value of state.
      */
-    public function serialize(): string
-    {
-        return serialize([
-            'attempts' => $this->attempts,
-            'maxAttempts' => $this->maxAttempts,
-            'queue' => $this->defaultQueue,
-            'state' => $this->state
-        ]);
-    }
-
-    /**
-     * unserialize
-     *
-     * @param mixed $data
-     * @return void
-     */
-    public function unserialize($data): void
-    {
-        $data = unserialize($data);
-        $this->attempts = $data['attempts'];
-        $this->maxAttempts = $data['maxAttempts'];
-        $this->defaultQueue = $data['queue'];
-        $this->state = $data['state'];
-    }
-
-    /**
-     * Get the value of queue
-     */
-    public function getQueue()
-    {
-        return $this->defaultQueue;
-    }
-
-    /**
-     * Set the value of queue
-     *
-     * @return  self
-     */
-    private function setQueue($queueName)
-    {
-        $this->defaultQueue = $queueName;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of state
-     */
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
 
     /**
-     * Set the value of state
+     * Set the value of state.
      *
      * @param $state
      * @return  self
      */
     public function setState($state): static
     {
-        $this->state = self::JOB_STATES[$state];
-
-        return $this;
+        $this->state = $state;
     }
 
     /**
-     * @param string $queue
+     * Get attempts number.
+     *
+     * @return int
+     */
+    public function getAttempts(): int
+    {
+        return $this->attempts;
+    }
+
+    /**
+     * Set attempts number.
+     *
+     * @param int $attempts
      * @return void
      */
-    public function dispatch(string $queue = 'default'): void
+    public function setAttempts(int $attempts): void
     {
-        $this->setQueue($queue);
-        $pdoDriverInstance = PDODriver::getInstance();
-        $this->queue = new Queue($pdoDriverInstance);
-        $this->queue->push($this);
+        $this->attempts = $attempts;
+    }
+
+    /**
+     * Get the maximum try of attempts.
+     *
+     * @return int
+     */
+    public function getMaxAttempts(): int
+    {
+        return $this->maxAttempts;
+    }
+
+    /**
+     * Set maximum number of attempts.
+     *
+     * @param int $maxAttempts
+     * @return void
+     */
+    public function setMaxAttempts(int $maxAttempts): void
+    {
+        $this->maxAttempts = $maxAttempts;
     }
 }
