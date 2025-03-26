@@ -53,7 +53,7 @@ class PDODriver implements DatabaseDriverInterface {
     /**
      * @var string PUSH_QUERY
      */
-    private const PUSH_QUERY = "INSERT INTO jobs (class, job, queue, state) VALUES (:class, :job, :queue, :state)";
+    private const PUSH_QUERY = "INSERT INTO jobs (class, job, queue, state) VALUES (:class, :job, 'default', :state)";
 
     /**
      * push query
@@ -63,16 +63,14 @@ class PDODriver implements DatabaseDriverInterface {
      */
     public function push(Job $job): bool
     {
-
         $class = get_class($job);
-        $jobDetails = $job->serialize();
-        $queue = $job->getQueue();
         $state = $job->getState();
+        $jobObject = serialize($job);
 
         $query = $this->operator->prepare(self::PUSH_QUERY);
         $query->bindParam(':class', $class, PDO::PARAM_STR);
-        $query->bindParam(':job', $jobDetails, PDO::PARAM_STR);
-        $query->bindParam(':queue', $queue, PDO::PARAM_STR);
+        $query->bindParam(':job', $jobObject, PDO::PARAM_STR);
+        //$query->bindParam(':queue', 'default');
         $query->bindParam(':state', $state, PDO::PARAM_STR);
         $query->execute();
         return $this->operator->lastInsertId();
